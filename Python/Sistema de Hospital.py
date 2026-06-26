@@ -130,7 +130,6 @@ class Prontuario:
 
     #Desvia o fluxo caso o método utilitário identifique que não há dados no histórico
     if self.vazio():
-      print("Não tem registro para remover")
 
       #Retorna uma ausência de valor para encerrar a execução do método prematuramente
       return None
@@ -222,8 +221,15 @@ class ArvoreBinaria:
     #Abre um laço de repetição infinito para navegar pela estrutura até achar uma vaga
     while True:
 
+      #SE O ID JÁ EXISTIR
+      if id == atual.id:
+          #Em vez de duplicar o nó e quebrar a árvore, apenas atualizamos a pasta de dados
+          atual.dados_paciente = dados
+
+          break #Finaliza a operação com sucesso
+
       #Compara se o ID do novo paciente é menor do que o ID do nó onde estamos posicionados
-      if no.id < atual.id:
+      elif no.id < atual.id:
 
         #Verifica se o braço esquerdo desse nó está livre (vazio)
         if atual.esquerda is None:
@@ -236,7 +242,7 @@ class ArvoreBinaria:
         atual = atual.esquerda
 
       #Bloco alternativo executado caso o ID do novo paciente seja maior que o ID do nó atual
-      elif no.id > atual.id:
+      else:
 
         #Verifica se o braço direito desse nó está livre (vazio)
         if atual.direita is None:
@@ -303,14 +309,42 @@ while True:
         #Exibe uma mensagem no console e captura o documento de identificação única do paciente (CPF) como texto
         cpf= input("Digite o CPF do paciente: ")
 
-        #Exibe uma mensagem no terminal e aguarda o usuário digitar o nome do paciente.
-        nome = input("Digite o nome do paciente: ")
+        #Verifica se o paciente JÁ POSSUI um cadastro histórico no hospital (pelo CPF)
+        if cpf in hospital:
+            
+            #Se o CPF já existe, recuperamos o paciente e o prontuário antigos direto do dicionário
+            paciente_antigo = hospital[cpf]["dados"]
+            prontuario_paciente = hospital[cpf]["prontuario"]
 
-        #Exibe uma mensagem solicitando a idade do paciente e a converte em um tipo inteiro.
-        idade = int(input("Digite a idade do paciente: "))
+            #Recupera o ID do prontuário que foi salvo no primeiro cadastro para mantê-lo FIXO
+            #PROTEÇÃO: Tenta pegar o ID. Se não existir (paciente antigo do banco antigo), assume None
+            id_prontuario = hospital[cpf].get("id", None)
 
-        #Pede um número de identificação único para o Prontuário (será a chave da BST)
-        id_prontuario = int(input("Digite o número de ID/Prontuário do paciente: "))
+            #Reaproveitamos o nome e a idade que já haviam sido cadastrados antes
+            nome = paciente_antigo.nome_paciente
+            idade = paciente_antigo.idade
+
+            #Caso seja um cadastro antigo que por acaso ficou sem ID, pede uma única vez para não dar erro na BST
+            if id_prontuario is None:
+              id_prontuario = int(input("Digite o número de ID/Prontuário deste paciente: "))
+
+            print(f"🔄 Paciente já cadastrado: {nome} (Idade: {idade}) | ID Prontuário Fixo: {id_prontuario}. Vamos direto para a triagem atual.\n")
+
+        else:
+
+          print("✨ Novo paciente detectado. Por favor, preencha o cadastro inicial:")
+
+          #Exibe uma mensagem no terminal e aguarda o usuário digitar o nome do paciente.
+          nome = input("Digite o nome do paciente: ")
+
+          #Exibe uma mensagem solicitando a idade do paciente e a converte em um tipo inteiro.
+          idade = int(input("Digite a idade do paciente: "))
+
+          #Pede um número de identificação único para o Prontuário (será a chave da BST)
+          id_prontuario = int(input("Digite o número de ID/Prontuário do paciente: "))
+
+          #Se é a primeira vez dele no hospital, cria uma instância da classe Prontuario passando o nome do paciente associado
+          prontuario_paciente = Prontuario(nome)
 
         #Exibe a tabela de triagem baseada no Protocolo de Manchester
         print("Níveis de Prioridade\n")
@@ -323,12 +357,10 @@ while True:
         if idade >= 60:
             nivel = 1
 
-        paciente = Paciente(cpf, nome, idade, nivel) #Instancia o objeto Paciente enviando os dados de nome, idade, nível e cpf definidos antes
+        paciente = Paciente(cpf, nome, idade, nivel) #Instancia o objeto Paciente enviando os dados de nome, idade, nível e cpf definidos antes 
 
-        prontuario_paciente = Prontuario(paciente.nome_paciente) #Cria uma instância da classe Prontuario passando o nome do paciente associado
-
-        #Salva uma estrutura de dicionário interna para o CPF contendo o objeto do paciente e o prontuário em branco
-        hospital[cpf] = {"dados": paciente, "prontuario": prontuario_paciente}
+        #Salva uma estrutura de dicionário interna para o CPF contendo o objeto do paciente, o prontuário em branco e o ID do prontuário
+        hospital[cpf] = {"dados": paciente, "prontuario": prontuario_paciente, "id": id_prontuario}
 
         #Chama o método de inserção da árvore para cadastrar o paciente pelo número do prontuário.
         #Guardamos a pasta completa do paciente na árvore também, associada ao ID dele.
@@ -434,8 +466,34 @@ while True:
             #Resgata o objeto do Prontuario individual que estava guardado dentro daquele nó
             prontuario_do_paciente = resultado_historico["prontuario"]
 
+            #Resgata o registro que está no topo da Pilha usando o método espiar
+            ultimo_registro = prontuario_do_paciente.Historico_atual()
+
+            #Se existir algum sintoma lançado, mostra o topo da pilha em destaque
+            if ultimo_registro is not None:
+                print(f"\n📌 Atendimento Mais Recente (Topo da Pilha): {ultimo_registro['descricao']} | Risco: {ultimo_registro['gravidade']}")
+                print("-" * 60)
+
             #Executa o método da pilha (reversed) para ler os sintomas do mais recente ao mais antigo
             prontuario_do_paciente.exibir_prontuario_completo()
+
+            #Se o histórico não estiver vazio, oferece a opção de remover o último registro
+            if not prontuario_do_paciente.vazio():
+                print("⚙️ [MENU MÉDICO] O que deseja fazer?")
+                print("1 - Manter histórico e voltar ao menu")
+                print("2 - Remover/Apagar o último registro lançado (Operação de Pilha)")
+
+                #Captura a decisão do usuário/médico
+                opcao_medica = input("Escolha uma opção: ")
+
+                #Se ele escolher a opção 2, aciona o descarte do elemento mais recente
+                if opcao_medica == "2":
+                    
+                    #Invoca o método da classe Prontuario que executa o '.pop()' no deque
+                    prontuario_do_paciente.remove_Historico()
+                    print("🗑️  Último registro de sintoma removido do topo da pilha com sucesso!\n")
+                else:
+                  print("Retornando ao menu...\n")
 
         #Se a árvore foi varrida até o fim e o ID não foi encontrado
         else:

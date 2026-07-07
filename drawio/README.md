@@ -11,6 +11,6 @@ Abaixo estão os mapeamentos visuais dos sistemas desenvolvidos, focando estrita
 ### 1. Sistema de Gestão de Biblioteca
 * **Descrição:** Modelagem Entidade-Relacionamento (DER) para controle de acervo, gerenciamento de alunos, vínculos de autoria e fluxo de empréstimos normalizado em 3FN.
 * **Modelo Lógico:**
-  ![Diagrama da Biblioteca](./caminho_para_sua_imagem/nome_da_foto.png)
+  ![Diagrama da Biblioteca](./drawio/Sistema da Biblioteca.drawio.png)
 
 ---

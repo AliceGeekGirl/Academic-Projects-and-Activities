@@ -1,16 +1,20 @@
 # 📐 Galeria de Diagramas - Projetos Acadêmicos
 
-Este diretório é dedicado exclusivamente ao armazenamento e documentação visual dos modelos lógicos, conceituais e arquiteturais desenvolvidos no **Draw.io** para as disciplinas de Engenharia.
+Este diretório é dedicado exclusivamente ao armazenamento e documentação visual dos modelos lógicos desenvolvidos no **Draw.io**, incluindo links diretos para seus respectivos scripts de banco de dados.
 
 ---
 
-## 📂 Diagramas Disponíveis
-
-Abaixo estão os mapeamentos visuais dos sistemas desenvolvidos, focando estritamente na modelagem lógica e nas regras de negócio (sem implementações em código).
+## 📂 Diagramas e Implementações
 
 ### 1. Sistema de Gestão de Biblioteca
 * **Descrição:** Modelagem Entidade-Relacionamento (DER) para controle de acervo, gerenciamento de alunos, vínculos de autoria e fluxo de empréstimos normalizado em 3FN.
-* **Modelo Lógico:**
-  ![Diagrama da Biblioteca](./drawio/Sistema da Biblioteca.drawio.png)
+* **Código Fonte:** 💾 [Acessar Script SQL do Projeto](../SQL/Sistema%20de%20Biblioteca.sql)
+
+#### Modelo Lógico:
+![Diagrama da Biblioteca](./Sistema%20da%20Biblioteca.drawio.png)
 
 ---
+
+## 🛠️ Ferramentas Utilizadas
+* **Draw.io:** Para modelagem gráfica de diagramas de entidade-relacionamento (ERD).
+* **VS Code + SQLite:** Para validação e execução dos scripts lógicos.

@@ -1,0 +1,21 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": false
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "ep-floral-waterfall-acalg4pn-pooler.sa-east-1.aws.neon.tech",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "Postgre_Estudos-Projetos",
+            "group": "Projetos",
+            "database": "neondb",
+            "username": "neondb_owner",
+            "password": "npg_JfiuAWF7grY4"
+        }
+    ]
+}
